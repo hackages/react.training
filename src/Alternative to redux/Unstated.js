@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container } from 'unstated';
+import React, { useState } from 'react';
+import { Container, Subscribe, Provider } from 'unstated';
 
 class CounterContainer extends Container {
   state = {
@@ -8,22 +8,35 @@ class CounterContainer extends Container {
 
   increment(step) {
     // increment
+    console.log(step);
+    this.setState({ count: this.state.count + step });
   }
 
   decrement = step => {
     // decrement
+    this.setState({ count: this.state.count - step });
   };
 }
 
 function Counter() {
-  const counter = {};
+  const amount = 1;
   return (
-    <div>
-      <button onClick={() => counter.decrement()}>-</button>
-      <span>{counter.state.count}</span>
-      <button onClick={() => counter.increment()}>+</button>
-    </div>
+    <Subscribe to={[CounterContainer]}>
+      {counter => {
+        return (
+          <div>
+            <span>{counter.state.count}</span>
+            <button onClick={() => counter.decrement(amount)}>-</button>
+            <button onClick={() => counter.increment(amount)}>+</button>
+          </div>
+        );
+      }}
+    </Subscribe>
   );
 }
 
-export default <Counter />;
+export default () => (
+  <Provider>
+    <Counter />
+  </Provider>
+);

@@ -1,44 +1,55 @@
-import React, { Component } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-export class Counter extends Component {
-  state = { count: 0 };
-  increment = amount => {
+const AmountContext = createContext(0);
+
+// export class Counter extends Component {
+//   static contextType = AmountContext;
+//   state = { count: 0 };
+//   increment = amount => {
+//     // increment
+//     this.setState({ count: this.state.count + amount });
+//   };
+//   decrement = amount => {
+//     // decrement
+//     this.setState({ count: this.state.count - amount });
+//   };
+function Counter() {
+  const [state, setState] = useState({ count: 0 });
+  const amount = useContext(AmountContext);
+  return (
+    <div>
+      <span>{state.count}</span>
+      <button onClick={() => decrement(amount)}>-</button>
+      <button onClick={() => increment(amount)}>+</button>
+    </div>
+  );
+
+  function increment(amount) {
     // increment
-  };
-  decrement = amount => {
+    setState({ count: state.count + amount });
+  }
+  function decrement(amount) {
     // decrement
-  };
-  render() {
-    const amount = 0;
-    return (
-      <div>
-        <span>{this.state.count}</span>
-        <button onClick={() => this.decrement(amount)}>-</button>
-        <button onClick={() => this.increment(amount)}>+</button>
-      </div>
-    );
+    setState({ count: state.count - amount });
   }
 }
 
-class AmountAdjuster extends React.Component {
-  state = { amount: 0 };
-  handleChange = event => {
-    this.setState({
+function AmountAdjuster({ children }) {
+  const [state, setState] = useState({ amount: 0 });
+  const handleChange = event => {
+    setState({
+      ...state,
       amount: parseInt(event.currentTarget.value, 10)
     });
   };
-  render() {
-    return (
+  return (
+    <AmountContext.Provider value={state.amount}>
       <div>
-        {this.props.children}
-        <input
-          type="number"
-          value={this.state.amount}
-          onChange={this.handleChange}
-        />
+        {children}
+        <input type="number" value={state.amount} onChange={handleChange} />
       </div>
-    );
-  }
+    </AmountContext.Provider>
+  );
 }
 
 export default () => (
